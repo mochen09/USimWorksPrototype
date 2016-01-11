@@ -16,5 +16,6 @@ namespace USimWorksPrototype
             InitializeComponent();
             Closing += (s, e) => ViewModelLocator.Cleanup();
         }
+
     }
 }

@@ -4,20 +4,19 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:ignore="http://www.galasoft.ch/ignore"
-        xmlns:xcad="http://schemas.xceed.com/wpf/xaml/avalondock"
         xmlns:local="clr-namespace:USimWorksPrototype"
         xmlns:fluent="urn:fluent-ribbon"
         xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:viewModel="clr-namespace:USimWorksPrototype.ViewModel"
         mc:Ignorable="d ignore"
         Height="768"
-        Width="1024"
+        Width="1366"
         Title="USimWorksV3"
         WindowStartupLocation="CenterScreen"
         TitleCaps="False"
         fluent:RibbonProperties.TitleBarHeight="0"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
-        >
+        WindowState="Maximized">
 
     <Window.Resources>
         <ResourceDictionary>
@@ -29,20 +28,22 @@
 
     <Border
         BorderBrush="{DynamicResource AccentColorBrush}"
-        BorderThickness="1">
+        BorderThickness="1"
+        Margin="0">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="137"/>
+                <RowDefinition Height="116"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="30"/>
             </Grid.RowDefinitions>
-            <fluent:Ribbon>
+            <Border BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="0,0,0,1" Background="{DynamicResource AccentColorBrush}">                
+                <fluent:Ribbon>
                 <fluent:Ribbon.Resources>
                     <Style TargetType="Button" BasedOn="{StaticResource MetroButton}">
                         <Setter Property="Margin" Value="5,5,5,5"/>
                     </Style>
                 </fluent:Ribbon.Resources>
-                <fluent:RibbonTabItem Header="工程" >
+                <fluent:RibbonTabItem Header="工程">
                     <fluent:RibbonGroupBox x:Name="ProjectRibbon" Header="工程">
                         <StackPanel Orientation="Horizontal" >
                             <Button Content="新建工程"/>
@@ -80,13 +81,28 @@
                             <Button Content="启动软总线"/>
                         </StackPanel>
                     </fluent:RibbonGroupBox>
-                    <fluent:RibbonGroupBox Header="仿真控制">
-                        <StackPanel Orientation="Horizontal">
-                            <Button Content="开始"/>
-                            <Button Content="暂停"/>
-                            <Button Content="单步"/>
-                            <Button Content="停止"/>
-                        </StackPanel>
+                        <fluent:RibbonGroupBox Header="仿真控制">
+                            <Grid Width="300">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="3*"/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
+                            <UniformGrid Columns="3" Grid.Row="0" Grid.Column="0">
+                                <Button Content="开始"/>
+                                <Button Content="暂停"/>
+                                <Button Content="停止"/>
+                            </UniformGrid>
+                            <UniformGrid Columns="3" Grid.Row="1" Grid.Column="0">
+                                    <Button Content="加速"/>
+                                    <Button Content="减速"/>
+                            </UniformGrid>
+                            <CheckBox Grid.Row="0" Grid.Column="1" Content="单步" HorizontalAlignment="Center"/>
+                            <CheckBox Grid.Row="1" Grid.Column="1" Content="连续" HorizontalAlignment="Center"/>
+                        </Grid>
                     </fluent:RibbonGroupBox>
                     <fluent:RibbonGroupBox Header="数据">
                         <StackPanel Orientation="Horizontal">
@@ -96,365 +112,368 @@
                     </fluent:RibbonGroupBox>
                 </fluent:RibbonTabItem>
             </fluent:Ribbon>
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <UniformGrid Rows="2" Grid.Column="0">
-                    <controls:MetroTabControl TabStripPlacement="Bottom" controls:TabControlHelper.IsUnderlined="True">
-                        <controls:MetroTabItem Header="工程信息">
-                            <GroupBox Header="工程信息">
-                                <TreeView ItemsSource="{Binding Models}" >
-                                    <TreeView.Resources>
-                                        <HierarchicalDataTemplate DataType="{x:Type viewModel:Model}" ItemsSource="{Binding PortList}">
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding ModelName}"/>
-                                                <TextBlock Text=":"/>
-                                                <TextBlock Text="{Binding ModelStatus}" Foreground="MediumVioletRed"/>
-                                            </StackPanel>
-                                        </HierarchicalDataTemplate>
-                                        <DataTemplate DataType="{x:Type viewModel:Port}">
-                                            <StackPanel Orientation="Horizontal">
-                                                <TextBlock Text="{Binding PortName}"/>
-                                                <TextBlock Text=" : "/>
-                                                <TextBlock Text="{Binding PortType}" Foreground="Violet"/>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </TreeView.Resources>
-                                    <TreeView.ItemContainerStyle>
-                                        <Style TargetType="{x:Type TreeViewItem}">
-                                            <Setter Property="IsExpanded" Value="True"/>
-                                        </Style>
-                                    </TreeView.ItemContainerStyle>
-                                </TreeView>
-                            </GroupBox>
+            </Border>
+            <Border Grid.Row="1" Margin="0,1,0,0">
+                <Grid Background="White">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <UniformGrid Rows="2" Grid.Column="0">
+                        <Border BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1">
+                            <controls:MetroTabControl TabStripPlacement="Top">
+                                <controls:MetroTabControl.Resources>
+                                    <HierarchicalDataTemplate DataType="{x:Type viewModel:Project}" ItemsSource="{Binding ModelCollection}">
+                                        <TextBlock Text="{Binding ProjectName}" FontSize="15"/>
+                                    </HierarchicalDataTemplate>
+                                    <HierarchicalDataTemplate DataType="{x:Type viewModel:Model}" ItemsSource="{Binding PortList}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding ModelName}" FontSize="14"/>
+                                            <TextBlock Text=":"/>
+                                            <TextBlock Text="{Binding ModelStatus}" Foreground="MediumVioletRed" FontSize="13" FontWeight="Medium"/>
+                                        </StackPanel>
+                                    </HierarchicalDataTemplate>
+                                    <DataTemplate DataType="{x:Type viewModel:Port}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding PortName}" FontSize="13"/>
+                                            <TextBlock Text=" : "/>
+                                            <TextBlock Text="{Binding PortType}" Foreground="Violet" FontSize="12"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </controls:MetroTabControl.Resources>
+                                <controls:MetroTabItem Header="工程信息">
+                                    <Border BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1,0,1,1">
+                                        <TreeView ItemsSource="{Binding Models}" >
+                                            <TreeView.ItemContainerStyle>
+                                                <Style TargetType="{x:Type TreeViewItem}">
+                                                    <Setter Property="IsExpanded" Value="True"/>
+                                                </Style>
+                                            </TreeView.ItemContainerStyle>
+                                        </TreeView>
+                                    </Border>
+                                </controls:MetroTabItem>
+                                <controls:MetroTabItem Header="工作空间">
+                                    <Border BorderBrush="{DynamicResource AccentColorBrush}" BorderThickness="1">
+                                        <TreeView ItemsSource="{Binding Projects}">
+                                            <TreeView.ItemContainerStyle>
+                                                <Style TargetType="{x:Type TreeViewItem}">
+                                                    <Setter Property="IsExpanded" Value="False"/>
+                                                </Style>
+                                            </TreeView.ItemContainerStyle>
+                                        </TreeView>
+                                    </Border>
+                                </controls:MetroTabItem>
+                            </controls:MetroTabControl>
+                        </Border>
+                        <GroupBox Header="属性">
+                            <ListView ItemsSource="{Binding Properties}">
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel/>
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" Background="White">
+                                            <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Text="{Binding Name}" Width="98"/>
+                                            <TextBox Width="100" BorderThickness="1"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </GroupBox>
+                    </UniformGrid>
+                    <controls:MetroTabControl TabStripPlacement="Top" Grid.Column="1" Margin="1,0,0,0">
+                        <controls:MetroTabItem Header="拓扑结构">
+                            <Border>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="180"/>
+                                    </Grid.ColumnDefinitions>
+                                    <ScrollViewer BorderBrush="{DynamicResource AccentColorBrush}" Grid.Column="0">
+                                        <Grid Background="LightGray">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="1*"/>
+                                                <RowDefinition Height="30"/>
+                                                <RowDefinition Height="1*"/>
+                                            </Grid.RowDefinitions>
+                                            <Canvas Background="LightGray">
+                                                <StackPanel Canvas.Left="40" Canvas.Top="20">
+                                                    <Border BorderBrush="Black" BorderThickness="1" >
+                                                        <Canvas Background="White"  Width="100" Height="100" />
+                                                    </Border>
+                                                    <DockPanel>
+                                                        <TextBlock Text="模型1.1"  TextAlignment="Right" DockPanel.Dock="Right"/>
+                                                        <TextBlock Text="设备1" TextAlignment="Left" DockPanel.Dock="Left"/>
+                                                    </DockPanel>
+                                                </StackPanel>
+                                                <StackPanel Canvas.Left="220" Canvas.Top="20">
+                                                    <Border BorderBrush="Black" BorderThickness="1">
+                                                        <Canvas Background="White"  Width="100" Height="100"/>
+                                                    </Border>
+                                                    <DockPanel>
+                                                        <TextBlock Text="设备2"  TextAlignment="Left" DockPanel.Dock="Left"/>
+                                                        <TextBlock Text="模型2.2" TextAlignment="Right" DockPanel.Dock="Right"/>
+                                                    </DockPanel>
+                                                </StackPanel>
+                                                <StackPanel  Canvas.Left="400" Canvas.Top="20">
+                                                    <Border BorderBrush="Black" BorderThickness="1">
+                                                        <Canvas Background="White"  Width="100" Height="100"/>
+                                                    </Border>
+                                                    <DockPanel>
+                                                        <TextBlock Text="设备3" TextAlignment="Left" DockPanel.Dock="Left"/>
+                                                        <TextBlock Text="模型3.3" TextAlignment="Right" DockPanel.Dock="Right"/>
+                                                    </DockPanel>
+                                                </StackPanel>
+                                                <StackPanel Canvas.Left="600" Canvas.Top="20">
+                                                    <Border BorderBrush="Black" BorderThickness="1" >
+                                                        <Canvas Background="White"  Width="100" Height="100"/>
+                                                    </Border>
+                                                    <DockPanel>
+                                                        <TextBlock Text="设备4" TextAlignment="Left" DockPanel.Dock="Left"/>
+                                                        <TextBlock Text="模型4.4" TextAlignment="Right" DockPanel.Dock="Right"/>
+                                                    </DockPanel>
+                                                </StackPanel>
+                                                <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
+                                                    <Polyline.Points>
+                                                        <Point X="90" Y="120"/>
+                                                        <Point X="90" Y="405"/>
+                                                    </Polyline.Points>
+                                                </Polyline>
+                                                <local:ArrowControl Canvas.Left="90" Canvas.Top="408" Ori="Down"/>
+                                                <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
+                                                    <Polyline.Points>
+                                                        <Point X="270" Y="120"/>
+                                                        <Point X="270" Y="405"/>
+                                                    </Polyline.Points>
+                                                </Polyline>
+                                                <local:ArrowControl Canvas.Left="270" Canvas.Top="408" Ori="Down"/>
+                                                <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
+                                                    <Polyline.Points>
+                                                        <Point X="450" Y="120"/>
+                                                        <Point X="450" Y="405"/>
+                                                    </Polyline.Points>
+                                                </Polyline>
+                                                <local:ArrowControl Canvas.Left="450" Canvas.Top="408" Ori="Down"/>
+                                                <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
+                                                    <Polyline.Points>
+                                                        <Point X="650" Y="120"/>
+                                                        <Point X="650" Y="405"/>
+                                                    </Polyline.Points>
+                                                </Polyline>
+                                                <local:ArrowControl Canvas.Left="650" Canvas.Top="408" Ori="Down"/>
+                                            </Canvas>
+                                            <Border  Grid.Row="1" Width="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType=Grid},Path=ActualWidth}" BorderBrush="Black" BorderThickness="2" Height="30" Background="{DynamicResource AccentColorBrush}">
+                                                <TextBlock Text="软总线" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <Canvas  Background="LightGray" Grid.Row="2">
+                                                <StackPanel Canvas.Left="50" Canvas.Top="200">
+                                                    <Border BorderBrush="Black" BorderThickness="1" >
+                                                        <Canvas Background="White"  Width="100" Height="100"/>
+                                                    </Border>
+                                                    <DockPanel>
+                                                        <TextBlock Text="设备5" TextAlignment="Left" DockPanel.Dock="Left"/>
+                                                        <TextBlock Text="模型5.5" TextAlignment="Right" DockPanel.Dock="Right"/>
+                                                    </DockPanel>
+                                                </StackPanel>
+                                                <StackPanel Canvas.Left="300" Canvas.Top="200">
+                                                    <Border BorderBrush="Black" BorderThickness="1">
+                                                        <Canvas Background="White"  Width="100" Height="100"/>
+                                                    </Border>
+                                                    <DockPanel>
+                                                        <TextBlock Text="设备6" TextAlignment="Left" DockPanel.Dock="Left"/>
+                                                        <TextBlock Text="模型6.6" TextAlignment="Right" DockPanel.Dock="Right"/>
+                                                    </DockPanel>
+                                                </StackPanel>
+                                                <StackPanel  Canvas.Left="500" Canvas.Top="200">
+                                                    <Border BorderBrush="Black" BorderThickness="1">
+                                                        <Canvas Background="White"  Width="100" Height="100"/>
+                                                    </Border>
+                                                    <DockPanel>
+                                                        <TextBlock Text="设备7" TextAlignment="Left" DockPanel.Dock="Left"/>
+                                                        <TextBlock Text="模型7.7" TextAlignment="Right" DockPanel.Dock="Right"/>
+                                                    </DockPanel>
+                                                </StackPanel>
+                                                <StackPanel Canvas.Left="700" Canvas.Top="200">
+                                                    <Border BorderBrush="Black" BorderThickness="1" >
+                                                        <Canvas Background="White"  Width="100" Height="100"/>
+                                                    </Border>
+                                                    <DockPanel>
+                                                        <TextBlock Text="设备8" TextAlignment="Left" DockPanel.Dock="Left"/>
+                                                        <TextBlock Text="模型8.8" TextAlignment="Right" DockPanel.Dock="Right"/>
+                                                    </DockPanel>
+                                                </StackPanel>
+                                                <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
+                                                    <Polyline.Points>
+                                                        <Point X="100" Y="200"/>
+                                                        <Point X="100" Y="5"/>
+                                                    </Polyline.Points>
+                                                </Polyline>
+                                                <local:ArrowControl Ori="Up" Canvas.Left="100" Canvas.Top="2"/>
+                                                <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
+                                                    <Polyline.Points>
+                                                        <Point X="350" Y="200"/>
+                                                        <Point X="350" Y="5"/>
+                                                    </Polyline.Points>
+                                                </Polyline>
+                                                <local:ArrowControl Canvas.Left="350" Ori="Up" Canvas.Top="2"/>
+                                                <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
+                                                    <Polyline.Points>
+                                                        <Point X="550" Y="200"/>
+                                                        <Point X="550" Y="5"/>
+                                                    </Polyline.Points>
+                                                </Polyline>
+                                                <local:ArrowControl Canvas.Left="550" Ori="Up" Canvas.Top="2"/>
+                                                <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
+                                                    <Polyline.Points>
+                                                        <Point X="750" Y="200"/>
+                                                        <Point X="750" Y="5"/>
+                                                    </Polyline.Points>
+                                                </Polyline>
+                                                <local:ArrowControl Canvas.Left="750" Ori="Up" Canvas.Top="2"/>
+                                            </Canvas>
+                                        </Grid>
+                                    </ScrollViewer>
+                                    <GroupBox Header="当前设备模型列表" Grid.Column="1">
+                                        <GroupBox.Resources>
+                                            <HierarchicalDataTemplate DataType="{x:Type viewModel:Device}" ItemsSource="{Binding ModelCollection}">
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Image Source="Icon/PC.png" Height="32"/>
+                                                        <TextBlock Text="{Binding DeviceName}"/>
+                                                    </StackPanel>
+                                            </HierarchicalDataTemplate>
+                                            <DataTemplate DataType="{x:Type viewModel:Model}">
+                                                <CheckBox>
+                                                    <CheckBox.Resources>
+                                                        <local:SoftwareIconConverter x:Key="SoftwareIconConverter"/>
+                                                    </CheckBox.Resources>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Image Source="{Binding ModelType,Converter={StaticResource SoftwareIconConverter}}" Width="24"/>
+                                                        <TextBlock Text="{Binding ModelName}"/>
+                                                    </StackPanel>
+                                                </CheckBox>
+                                            </DataTemplate>
+                                        </GroupBox.Resources>
+                                        <TreeView ItemsSource="{Binding Devices}">
+                                            <TreeView.ItemContainerStyle>
+                                                <Style TargetType="TreeViewItem">
+                                                    <Setter Property="IsExpanded" Value="True"/>
+                                                </Style>
+                                            </TreeView.ItemContainerStyle>
+                                        </TreeView>
+                                    </GroupBox>
+                                </Grid>
+                            </Border>
                         </controls:MetroTabItem>
-                        <controls:MetroTabItem Header="工作空间">
-                            <GroupBox Header="工作空间">
-                                <ListBox/>
-                            </GroupBox>
+                        <controls:MetroTabItem Header="数据交互">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="200"/>
+                                </Grid.ColumnDefinitions>
+                                <ScrollViewer Grid.Column="0">
+                                    <Canvas Background="LightGray">
+                                        <StackPanel  Canvas.Left="50" Canvas.Top="50">
+                                            <Border Background="Brown" Width="80" Height="80"/>
+                                            <TextBlock Text="模型1" TextAlignment="Center"></TextBlock>
+                                        </StackPanel>
+                                        <StackPanel  Canvas.Left="50" Canvas.Top="150">
+                                            <Border Background="Brown" Width="80" Height="80"/>
+                                            <TextBlock Text="模型2" TextAlignment="Center"></TextBlock>
+                                        </StackPanel>
+                                        <StackPanel  Canvas.Left="50" Canvas.Top="250">
+                                            <Border Background="Brown" Width="80" Height="80"/>
+                                            <TextBlock Text="模型3" TextAlignment="Center"></TextBlock>
+                                        </StackPanel>
+                                        <StackPanel  Canvas.Left="50" Canvas.Top="350">
+                                            <Border Background="Brown" Width="80" Height="80"/>
+                                            <TextBlock Text="模型4" TextAlignment="Center"></TextBlock>
+                                        </StackPanel>
+                                        <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
+                                            <Polyline.Points>
+                                                <Point X="130" Y="90"/>
+                                                <Point X="650" Y="90"/>
+                                                <Point X="650" Y="65"/>
+                                                <Point X="1496" Y="65"/>
+                                            </Polyline.Points>
+                                        </Polyline>
+                                        <local:ArrowControl Canvas.Left="1500" Canvas.Top="65" Ori="Right"/>
+                                        <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
+                                            <Polyline.Points>
+                                                <Point X="133" Y="190"/>
+                                                <Point X="680" Y="190"/>
+                                                <Point X="680" Y="82"/>
+                                                <Point X="1496" Y="82"/>
+                                            </Polyline.Points>
+                                        </Polyline>
+                                        <local:ArrowControl Canvas.Left="130" Canvas.Top="190" Ori="Left"/>
+                                    </Canvas>
+                                </ScrollViewer >
+                                <GroupBox Header="仿真软总线数据中心" Grid.Column="1">
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="30"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                        <StackPanel Grid.Row="0" Orientation="Horizontal" Background="White">
+                                            <Border BorderThickness="0,0,1,0" Width="81" BorderBrush="LightGray">
+                                                <TextBlock Background="White" Width="95"/>
+                                            </Border>
+                                            <Border Background="White" Width="25" Margin="16,0,16,0">
+                                                <TextBlock Background="White" Text="采集" VerticalAlignment="Center"/>
+                                            </Border>
+                                            <Border Background="White" Width="42">
+                                                <TextBlock Background="White" Text="监控" VerticalAlignment="Center"/>
+                                            </Border>
+                                        </StackPanel>
+                                        <ListBox Grid.Row="1">
+                                            <ListBox.Resources>
+                                                <Style TargetType="ListBoxItem">
+                                                    <Setter Property="Height" Value="20"/>
+                                                    <Setter Property="Margin" Value="0,0,0,5"/>
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate>
+                                                                <Border BorderThickness="1" BorderBrush="LightGray" Height="20">
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <Border BorderThickness="0,0,1,0" BorderBrush="LightGray" Width="80">
+                                                                            <TextBox Text="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType=ListBoxItem},Path=Content}"
+                                                                               Width="100" HorizontalAlignment="Left"/>
+                                                                        </Border>
+                                                                        <CheckBox IsChecked="True" Margin="20,0,0,0"/>
+                                                                        <CheckBox IsChecked="True" Margin="16,0,0,0"/>
+                                                                    </StackPanel>
+                                                                </Border>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </ListBox.Resources>
+                                            <ListBoxItem Content="数据1"/>
+                                            <ListBoxItem Content="数据2"/>
+                                            <ListBoxItem Content="数据3"/>
+                                            <ListBoxItem Content="数据4"/>
+                                            <ListBoxItem Content="数据5"/>
+                                            <ListBoxItem Content="数据6"/>
+                                        </ListBox>
+                                    </Grid>
+                                </GroupBox>
+                            </Grid>
+                        </controls:MetroTabItem>
+                        <controls:MetroTabItem Header="图表1">
+                            <ScrollViewer>
+                                <Canvas Background="LightGray"></Canvas>
+                            </ScrollViewer>
+                        </controls:MetroTabItem>
+                        <controls:MetroTabItem Header="图表2">
+                            <ScrollViewer>
+                                <Canvas Background="LightGray"></Canvas>
+                            </ScrollViewer>
                         </controls:MetroTabItem>
                     </controls:MetroTabControl>
-                    <GroupBox Header="模型属性">
-                        <ListView ItemsSource="{Binding Properties}">
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel/>
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel Orientation="Horizontal" Background="White">
-                                        <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" Text="{Binding Name}" Width="98"/>
-                                        <TextBox Width="100" BorderThickness="1"/>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </GroupBox>
-                </UniformGrid>
-                <controls:MetroTabControl TabStripPlacement="Bottom" Grid.Column="1" controls:TabControlHelper.IsUnderlined="True">
-                    <controls:MetroTabItem Header="拓扑结构">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="180"/>
-                            </Grid.ColumnDefinitions>
-                            <GroupBox Header="拓扑结构" Grid.Column="0">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
-                                    <Canvas Background="LightGray" Grid.Row="0">
-                                        <StackPanel Canvas.Left="20" Canvas.Top="20">
-                                            <Border BorderBrush="Black" BorderThickness="1" >
-                                                <Canvas Background="LightSkyBlue"  Width="100" Height="100">
-                                                    <StackPanel Canvas.Left="20" Canvas.Top="20" >
-                                                        <Border Background="White" Width="24" Height="24" BorderThickness="2" BorderBrush="Gray"/>
-                                                        <TextBlock Text="模型1"/>
-                                                    </StackPanel>
-                                                </Canvas>
-                                            </Border>
-                                            <TextBlock Text="设备1" Width="100" Height="30" TextAlignment="Left"/>
-                                        </StackPanel>
-                                        <StackPanel Canvas.Left="180" Canvas.Top="20">
-                                            <Border BorderBrush="Black" BorderThickness="1">
-                                                <Canvas Background="LightSkyBlue"  Width="100" Height="100">
-                                                    <StackPanel Canvas.Left="20" Canvas.Top="20" >
-                                                        <Border Background="White" Width="24" Height="24" BorderThickness="2" BorderBrush="Gray"/>
-                                                        <TextBlock Text="模型2"/>
-                                                    </StackPanel>
-                                                </Canvas>
-                                            </Border>
-                                            <TextBlock Text="设备2" Width="100" Height="30" TextAlignment="Left"/>
-                                        </StackPanel>
-                                        <StackPanel  Canvas.Left="340" Canvas.Top="20">
-                                            <Border BorderBrush="Black" BorderThickness="1">
-                                                <Canvas Background="LightSkyBlue"  Width="100" Height="100">
-                                                    <StackPanel Canvas.Left="20" Canvas.Top="20" >
-                                                        <Border Background="White" Width="24" Height="24" BorderThickness="2" BorderBrush="Gray"/>
-                                                        <TextBlock Text="模型3"/>
-                                                    </StackPanel>
-                                                </Canvas>
-                                            </Border>
-                                            <TextBlock Text="设备3" Width="100" Height="30" TextAlignment="Left"/>
-                                        </StackPanel>
-                                        <StackPanel Canvas.Left="500" Canvas.Top="20">
-                                            <Border BorderBrush="Black" BorderThickness="1" >
-                                                <Canvas Background="LightSkyBlue"  Width="100" Height="100">
-                                                    <StackPanel Canvas.Left="20" Canvas.Top="20" >
-                                                        <Border Background="White" Width="24" Height="24" BorderThickness="2" BorderBrush="Gray"/>
-                                                        <TextBlock Text="模型4"/>
-                                                    </StackPanel>
-                                                </Canvas>
-                                            </Border>
-                                            <TextBlock Text="设备4" Width="100" Height="30" TextAlignment="Left"/>
-                                        </StackPanel>
-                                        <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
-                                            <Polyline.Points>
-                                                <Point X="70" Y="120"/>
-                                                <Point X="70" Y="250"/>
-                                            </Polyline.Points>
-                                        </Polyline>
-                                        <local:ArrowControl Canvas.Left="70" Canvas.Top="253" Ori="Down"/>
-                                        <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
-                                            <Polyline.Points>
-                                                <Point X="230" Y="120"/>
-                                                <Point X="230" Y="250"/>
-                                            </Polyline.Points>
-                                        </Polyline>
-                                        <local:ArrowControl Canvas.Left="230" Canvas.Top="253" Ori="Down"/>
-                                        <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
-                                            <Polyline.Points>
-                                                <Point X="390" Y="120"/>
-                                                <Point X="390" Y="250"/>
-                                            </Polyline.Points>
-                                        </Polyline>
-                                        <local:ArrowControl Canvas.Left="390" Canvas.Top="253" Ori="Down"/>
-                                        <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
-                                            <Polyline.Points>
-                                                <Point X="550" Y="120"/>
-                                                <Point X="550" Y="250"/>
-                                            </Polyline.Points>
-                                        </Polyline>
-                                        <local:ArrowControl Canvas.Left="550" Canvas.Top="253" Ori="Down"/>
-                                    </Canvas>
-                                    <Border  Grid.Row="1" BorderBrush="Black" BorderThickness="2" Height="30" Background="LightGreen">
-                                        <TextBlock Text="软总线" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    </Border>
-                                    <Canvas Grid.Row="2" Background="LightGray">
-                                        <StackPanel Canvas.Left="20" Canvas.Top="100">
-                                            <Border BorderBrush="Black" BorderThickness="1" >
-                                                <Canvas Background="LightSkyBlue"  Width="100" Height="100">
-                                                    <StackPanel Canvas.Left="20" Canvas.Top="20" >
-                                                        <Border Background="White" Width="24" Height="24" BorderBrush="LimeGreen" BorderThickness="2"/>
-                                                        <TextBlock Text="模型5"/>
-                                                    </StackPanel>
-                                                </Canvas>
-                                            </Border>
-                                            <TextBlock Text="设备5" Width="100" Height="30" TextAlignment="Left"/>
-                                        </StackPanel>
-                                        <StackPanel Canvas.Left="180" Canvas.Top="100">
-                                            <Border BorderBrush="Black" BorderThickness="1">
-                                                <Canvas Background="LightSkyBlue"  Width="100" Height="100">
-                                                    <StackPanel Canvas.Left="20" Canvas.Top="20" >
-                                                        <Border Background="White" Width="24" Height="24" BorderThickness="2" BorderBrush="Red" />
-                                                        <TextBlock Text="模型6"/>
-                                                    </StackPanel>
-                                                </Canvas>
-                                            </Border>
-                                            <TextBlock Text="设备6" Width="100" Height="30" TextAlignment="Left"/>
-                                        </StackPanel>
-                                        <StackPanel  Canvas.Left="340" Canvas.Top="100">
-                                            <Border BorderBrush="Black" BorderThickness="1">
-                                                <Canvas Background="LightSkyBlue"  Width="100" Height="100">
-                                                    <StackPanel Canvas.Left="20" Canvas.Top="20" >
-                                                        <Border Background="White" Width="24" Height="24" BorderThickness="2" BorderBrush="Gray"/>
-                                                        <TextBlock Text="模型7"/>
-                                                    </StackPanel>
-                                                </Canvas>
-                                            </Border>
-                                            <TextBlock Text="设备7" Width="100" Height="30" TextAlignment="Left"/>
-                                        </StackPanel>
-                                        <StackPanel Canvas.Left="500" Canvas.Top="100">
-                                            <Border BorderBrush="Black" BorderThickness="1" >
-                                                <Canvas Background="LightSkyBlue"  Width="100" Height="100">
-                                                    <StackPanel Canvas.Left="20" Canvas.Top="20" >
-                                                        <Border Background="White" Width="24" Height="24" BorderThickness="2" BorderBrush="Gray"/>
-                                                        <TextBlock Text="模型8"/>
-                                                    </StackPanel>
-                                                </Canvas>
-                                            </Border>
-                                            <TextBlock Text="设备8" Width="100" Height="30" TextAlignment="Left"/>
-                                        </StackPanel>
-                                        <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
-                                            <Polyline.Points>
-                                                <Point X="70" Y="100"/>
-                                                <Point X="70" Y="5"/>
-                                            </Polyline.Points>
-                                        </Polyline>
-                                        <local:ArrowControl Ori="Up" Canvas.Left="70" Canvas.Top="2"/>
-                                        <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
-                                            <Polyline.Points>
-                                                <Point X="230" Y="100"/>
-                                                <Point X="230" Y="5"/>
-                                            </Polyline.Points>
-                                        </Polyline>
-                                        <local:ArrowControl Canvas.Left="230" Ori="Up" Canvas.Top="2"/>
-                                        <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
-                                            <Polyline.Points>
-                                                <Point X="390" Y="100"/>
-                                                <Point X="390" Y="5"/>
-                                            </Polyline.Points>
-                                        </Polyline>
-                                        <local:ArrowControl Canvas.Left="390" Ori="Up" Canvas.Top="2"/>
-                                        <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
-                                            <Polyline.Points>
-                                                <Point X="550" Y="100"/>
-                                                <Point X="550" Y="5"/>
-                                            </Polyline.Points>
-                                        </Polyline>
-                                        <local:ArrowControl Canvas.Left="550" Ori="Up" Canvas.Top="2"/>
-                                    </Canvas>
-                                </Grid>
-                            </GroupBox>
-                            <UniformGrid Grid.Column="1" Rows="2">
-                                <GroupBox Header="设备库">
-                                    <ListBox ItemsSource="{Binding Devices}">
-                                        <ListBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Height="30" Orientation="Horizontal">
-                                                    <Border BorderBrush="LightGray" BorderThickness="1" Width="50">
-                                                        <TextBlock Text="{Binding DeviceType}" TextAlignment="Center"></TextBlock>
-                                                    </Border>
-                                                    <TextBlock Text="{Binding DeviceName}" Margin="10,0,0,0"/>
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ListBox.ItemTemplate>
-                                    </ListBox>
-                                </GroupBox>
-                                <GroupBox Header="模型库">
-                                    <ListBox ItemsSource="{Binding Models}">
-                                        <ListBox.ItemTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Height="20" Orientation="Horizontal">
-                                                    <Border BorderBrush="LightGray" BorderThickness="1" Width="50">
-                                                        <TextBlock Text="{Binding ModelType}" TextAlignment="Center"/>
-                                                    </Border>
-                                                    <TextBlock Text="{Binding ModelName}" Margin="10,0,0,0"/>
-                                                </StackPanel>
-                                            </DataTemplate>
-                                        </ListBox.ItemTemplate>
-                                    </ListBox>
-                                </GroupBox>
-                            </UniformGrid>
-                        </Grid>
-                    </controls:MetroTabItem>
-                    <controls:MetroTabItem Header="数据交互">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="200"/>
-                            </Grid.ColumnDefinitions>
-                            <GroupBox Header="数据交互" Grid.Column="0">
-                                <Canvas Background="LightGray">
-                                    <StackPanel  Canvas.Left="50" Canvas.Top="50">
-                                        <Border Background="Brown" Width="80" Height="80"/>
-                                        <TextBlock Text="模型1" TextAlignment="Center"></TextBlock>
-                                    </StackPanel>
-                                    <StackPanel  Canvas.Left="50" Canvas.Top="150">
-                                        <Border Background="Brown" Width="80" Height="80"/>
-                                        <TextBlock Text="模型2" TextAlignment="Center"></TextBlock>
-                                    </StackPanel>
-                                    <StackPanel  Canvas.Left="50" Canvas.Top="250">
-                                        <Border Background="Brown" Width="80" Height="80"/>
-                                        <TextBlock Text="模型3" TextAlignment="Center"></TextBlock>
-                                    </StackPanel>
-                                    <StackPanel  Canvas.Left="50" Canvas.Top="350">
-                                        <Border Background="Brown" Width="80" Height="80"/>
-                                        <TextBlock Text="模型4" TextAlignment="Center"></TextBlock>
-                                    </StackPanel>
-                                    <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
-                                        <Polyline.Points>
-                                            <Point X="130" Y="90"/>
-                                            <Point X="500" Y="90"/>
-                                            <Point X="500" Y="65"/>
-                                            <Point X="595" Y="65"/>
-                                        </Polyline.Points>
-                                    </Polyline>
-                                    <local:ArrowControl Canvas.Left="600" Canvas.Top="65" Ori="Right"/>
-                                    <Polyline StrokeThickness="5" Stroke="Black" StrokeEndLineCap="Square">
-                                        <Polyline.Points>
-                                            <Point X="133" Y="190"/>
-                                            <Point X="550" Y="190"/>
-                                            <Point X="550" Y="82"/>
-                                            <Point X="600" Y="82"/>
-                                        </Polyline.Points>
-                                    </Polyline>
-                                    <local:ArrowControl Canvas.Left="130" Canvas.Top="190" Ori="Left"/>
-                                </Canvas>
-                            </GroupBox >
-                            <GroupBox Header="仿真软总线数据中心" Grid.Column="1">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="30"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
-                                    <StackPanel Grid.Row="0" Orientation="Horizontal" Background="White">
-                                        <Border BorderThickness="0,0,1,0" Width="81" BorderBrush="LightGray">
-                                            <TextBlock Background="White" Width="95"/>
-                                        </Border>
-                                        <Border Background="White" Width="25" Margin="16,0,16,0">
-                                            <TextBlock Background="White" Text="采集" VerticalAlignment="Center"/>
-                                        </Border>
-                                        <Border Background="White" Width="42">
-                                            <TextBlock Background="White" Text="监控" VerticalAlignment="Center"/>
-                                        </Border>
-                                    </StackPanel>
-                                    <ListBox Grid.Row="1">
-                                        <ListBox.Resources>
-                                            <Style TargetType="ListBoxItem">
-                                                <Setter Property="Height" Value="20"/>
-                                                <Setter Property="Template">
-                                                    <Setter.Value>
-                                                        <ControlTemplate>
-                                                            <Border BorderThickness="1" BorderBrush="LightGray" Height="20">
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <Border BorderThickness="0,0,1,0" BorderBrush="LightGray" Width="80">
-                                                                        <TextBlock Text="{Binding RelativeSource={RelativeSource FindAncestor,AncestorType=ListBoxItem},Path=Content}"
-                                                                               Width="100" HorizontalAlignment="Left"/>
-                                                                    </Border>
-                                                                    <CheckBox IsChecked="True" Margin="20,0,0,0"/>
-                                                                    <CheckBox IsChecked="True" Margin="16,0,0,0"/>
-                                                                </StackPanel>
-                                                            </Border>
-                                                        </ControlTemplate>
-                                                    </Setter.Value>
-                                                </Setter>
-                                            </Style>
-                                        </ListBox.Resources>
-                                        <ListBoxItem Content="数据1"/>
-                                        <ListBoxItem Content="数据2"/>
-                                        <ListBoxItem Content="数据3"/>
-                                        <ListBoxItem Content="数据4"/>
-                                        <ListBoxItem Content="数据5"/>
-                                        <ListBoxItem Content="数据6"/>
-                                    </ListBox>
-                                </Grid>
-                            </GroupBox>
-                        </Grid>
-                    </controls:MetroTabItem>
-                    <controls:MetroTabItem Header="图表1">
-                        <GroupBox Header="图表1"/>
-                    </controls:MetroTabItem>
-                    <controls:MetroTabItem Header="图表2">
-                        <GroupBox Header="图表2"/>
-                    </controls:MetroTabItem>
-                </controls:MetroTabControl>
-            </Grid>
+                </Grid>
+            </Border>
             <StatusBar Grid.Row="2"></StatusBar>
         </Grid>
     </Border>
